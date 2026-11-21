@@ -1,0 +1,7 @@
+# 根据文档编写
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/todo_app?useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: EyeDeepInHidden_relation4455?
+    driver-class-name: com.mysql.cj.jdbc.Driver
