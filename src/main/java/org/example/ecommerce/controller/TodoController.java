@@ -45,20 +45,23 @@ public class TodoController {
     // 选择查看信息
     @GetMapping("/select")
     public ResultJs<Todo> select(Integer id, HttpSession session){
-        if(id.getClass() != Integer.class){throw new InformationException("输入类型不匹配!");}
+        if(id == null) throw new InformationException("请填入查询序号!");
+        if(id <= 0) throw new InformationException("查询序号必须大于 0!");
 
         Integer userId = (Integer) session.getAttribute("LOGIN_USER_ID");
         if(userId == null) throw new InformationException("请登录后查询!");
 
         Todo todo = todoMapper.selectTodo(id);
+        if(todo == null) throw new InformationException("查询失败：该待办不存在!");
         if(!todo.getUserId().equals(userId)) throw new InformationException("只能访问自己的待办信息!");
 
-        return new ResultJs<>(todoMapper.selectTodo(id));
+        return new ResultJs<>(todo);
     }
 
     @GetMapping("/finish")     // https://localhost:8080/api/finish?
     public ResultJs<String> finish(Integer id, HttpSession session){
-        if(id.getClass() != Integer.class){throw new InformationException("输入类型不匹配!");}
+        if(id == null) throw new InformationException("请填入查询序号!");
+        if(id <= 0) throw new InformationException("查询序号必须大于 0!");
 
         Integer userId = (Integer) session.getAttribute("LOGIN_USER_ID");
         if(userId == null) throw new InformationException("请登录后操作!");

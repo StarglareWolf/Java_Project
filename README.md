@@ -1,41 +1,53 @@
-Maven 简单、标准化、易上手，适合小型和传统项目； Gradle 灵活高效、可定制，适合中大型和复杂项目
+版本
 
-考虑到 Maven 新手友好、本项目属考核小项目，且 Gradle 兼容 Maven 生态，迁移相对容易，因此本项目采用 Maven
+Maven 4.0.0
 
-配置
+SpringBoot 3.5.13
 
-1. spring boot 要求 3.5.* 版本，于是通过更改 pom.xml 的版本号，并刷新后自动配置为 3.5.13
-2. MyBatis-Plus: 3.5.18 版本，兼容 spring boot 3.5.13
+Java 25
 
-配置说明: [Mybatis-Plus 配置](https://baomidou.com/getting-started/install/)
-3. MapperScan: 用于配置然后使用 MyBatis-Plus, 通过 src/main/java 根据官方包名创建包 com.baomidou.mybatisplus.samples.quickstart 和 Application.java, 然后添加代码
+MySQL 8.0 Command Line Client
 
-配置说明: [MapperScan](https://baomidou.com/getting-started/config/) 
+数据库初始化: 打开 schema.sql 并将其中的代码复制到 mysql 运行
 
-4. [数据库连接](https://blog.csdn.net/English221/article/details/129347883)
+访问地址： http://localhost:8080 
+```bash
+# 后缀
+UserController 层面：
+1. /api/register?username=你的注册账号名&password=你的注册密码
+2. /api/login?username=你的登录账号名&password=你的登录密码
+3. /api/update?username=你的账号名&password=你的旧密码&newpassword=你的新密码
+4. /api/logout # 登出
 
-后端基本概念
+TodoController 层面
+1. /api/todo/add?title=你的待办事项标题&content=你的待办事项内容
+2. /api/todo/list  # 罗列你的所有待办事项
+3. /api/todo/select?id=你的待办事项序号
+4. /api/todo/finish?id=你的待办事项序号
+5. /api/todo/delete?id=你的待办事项序号
+6. /api/todo/update/title?id=待更新序号&title=新标题
+7. /api/todo/update/content?id=待更新序号&content=新内容
+8. /api/todo/delete?id=需要删除的事项序号
+```
 
-浏览器: 浏览器访问地址时，先向服务器请求页面资源，服务器将网页信息(代码)返回给浏览器，浏览器解析资源，构建网页结构和运行脚本，网页才得以真正显示。现代前后端分离，服务器一般只会先返回基础页面和静态资源，真正的数据需要等前端通过接口从后端获取
+启动步骤
 
-前端职责: 偏向用户层，主要职责是将功能可视化。存在业务逻辑，但是都是偏向用户层。因为直接面向用户，不可将用户层视为安全一环，因此出于安全和控制权，前端不与数据库相连，而是通过后端进行转接
+1. 初始化数据库
+2. 进入 resources 的application.yml 将 username 和 password 改成你自己的数据库的用户名和密码
+3. 打开 EcommerceApplication 并运行
+4. 打开测试项 ApiHttpTest 进行测试运行，测试通过即为连接成功
 
-后端职责: 运行大量复杂逻辑，接受前端请求，判断行为条件，并连接数据库，从数据库调动数据返回给前端执行。轻量交互更适合前端，后端交互较为困难，强行包揽前端会造成逻辑的难维护
+测试方式(代码必须处于运行当中，通过 EcommerceApplication 运行)
 
-数据库: 将数据稳定保存下来，也存在业务逻辑，包括查询、筛选、控制等操作，但核心任务仍是管理数据，更多逻辑还是由后端掌握
+1. 浏览器手动测试：打开浏览器，先通过上述 register 和 login 登录后，按照上述给定网址进行相应操作测试
+2. [apifox 手动测试](https://docs.apifox.com/doc-5743620) 按照文档执行完毕后选中 UserController 和 TodoController 右键选择 upload to apifox 即可开始测试
+3. apifox 自动测试: 打开你的 Apifox, 导入文件中的 ecommerce项目测试.apifox.json,然后先通过 register 和 login 测试后再进行其它测试
+3. [网页测试](http://localhost:8080/login.html) 注册登录后进行测试
 
-服务器: 本地代码统统运行在自己的电脑，但是真正使用时前、后端以及数据库需要分别在不同的服务器或运行环境独立运行
+实际运行结果：未登录/登录信息错误时不能处理任何东西，也不能查看任何信息，自己无法查询他人信息
 
-接口: 前后端的通信方式，通过接口相互传输信息，进而相互配合
+**注意事项**
 
-由于前后端的接口、后端和数据库的连接，它们都需要通过统一的数据格式规范进行对接，否则容易造成服务器不响应的问题。同时，如果中间出了问题，应该回滚而不是继续执行。如果服务器长时间不响应，还需要能够向用户端做出解释
+待办事项编号是逐步递增的，并不是每次都从 1 开始，因此需要进行增删查改时，最好先通过 list 查看自己的已有事项的 id,不要错看成 user_id
 
-参考: [前端、后端、数据库工作流以及浏览器、服务器、接口、数据库的职责](https://docs.pingcode.com/insights/rein5drvslp0ss2a7fukt230)
-
-MySQL 是一种数据库软件(DBMS),也就是说，还需要在里面建立一个数据库，还要建立一些表来查询不同东西。
-
-MySQL 是客户机-服务器的 DBMS, 谁发出请求谁就是客户机，谁接受请求并处理谁就是服务器，和前后端的物理意义上分隔开的服务器不是一个概念
-
-SQL 语句不区分大小写，所以你的关键字全部大写或者全部小写都没有任何问题，也因此，你的数据库名以及表名不要和关键字一样，免得出现预料之外的问题
-
-JdbcTemplate 写法
+没有使用 mybatis-plus,而是使用 springboot 自带的 jdbcTemplate

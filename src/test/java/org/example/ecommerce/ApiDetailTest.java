@@ -1,5 +1,6 @@
 package org.example.ecommerce;
 
+import jakarta.servlet.http.HttpSession;
 import org.example.ecommerce.SelfDefineException.InformationException;
 import org.example.ecommerce.controller.TodoController;
 import org.example.ecommerce.mapper.TodoMapper;
@@ -22,9 +23,6 @@ public class ApiDetailTest {
 
     @Autowired
     private TodoMapper todoMapper;
-
-    @Autowired
-    private TodoController todoController;
 
     @Test
     public void testFullFlow() {
@@ -61,6 +59,11 @@ public class ApiDetailTest {
         });
         // 校验异常消息
         assertEquals("不可访问他人信息!", ex.getMessage());
+
+        // 输入类型匹配测试
+        InformationException inputError = assertThrows(InformationException.class, () ->{
+            todoMapper.selectTodo(999999999);
+        });
 
         // 更新标题测试
         todoMapper.updateTitle(test_todo.getId(), newTitle);

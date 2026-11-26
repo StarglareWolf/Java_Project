@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>todolist可视化页面</title>
+</head>
+<body>
+    <h1>todolist可视化页面</h1>
+    <div class = "box" id="deal_todo">
+        <h6>注意：添加待办事项时，id不需要填写；选择、删除、修改待办事项时，title和content不需要填写</h6>
+        <input type="text" id="id" name="id" placeholder="待办事项id"><br><br>
+        <input type="text" id="title" name="title" placeholder="待办事项标题"><br><br>
+        <input type="text" id="content" name="content" placeholder="待办事项内容"><br><br>
+        <input type="text" id="new_title" name="new_title" placeholder="新标题(需要更新再填)"><br><br>
+        <input type="text" id="new_content" name="new_content" placeholder="新内容(需要更新再填)"><br><br>
+    </div>
+
+     <div class="box" id="todo">
+         <button onclick="addTodo()">添加待办事项</button><br><br>
+         <button onclick="showTodos()">待办事项列表</button>
+         <button onclick="selectTodo()">查询待办事项</button><br><br>
+         <button onclick="updatetitle()">更新待办标题</button>
+         <button onclick="updatecontent()">更新待办内容</button>
+        <button onclick="finishTodo()">更改待办状态</button><br><br>
+        <button onclick="deleteTodo()">删除待办事项</button><br><br>
+        <button onclick="logout()">退出登录</button>
+    </div>
+</body>
+
+
+<script>
+    window.onload = function() {
+    fetch(`/api/todo/list`)
+        .then(res => res.text())
+        .then(data => {
+            if (data.includes("未登录")) {
+                alert("请先登录！");
+                window.location.href = "/login.html"; // 踢回去
+            } 
+        });
+}
+
+function logout(){
+        fetch(`/api/logout`)
+        .then(response => response.text())
+        .then(data =>{
+            alert(data);
+            window.location.href = "/login.html";
+        })
+    }
+
+    function showTodos(){
+        fetch(`/api/todo/list`)
+            .then(res => res.json())
+            .then(data => {
+                // 用 JSON.stringify 把对象变成看得懂的文字，或者在控制台看
+                alert("查到的数据：" + JSON.stringify(data));
+                console.log("待办列表：", data);
+            });
+    }
+
+    function addTodo(){
+        let title = document.getElementById('title').value;
+        let content = document.getElementById('content').value;
+
+        fetch(`/api/todo/add?title=${title}&content=${content}`)
+            .then(response => response.text()) // 改成 .text()
+            .then(data => alert(data));        // 直接弹窗
+    }
+
+   function deleteTodo(){
+        let id = document.getElementById('id').value;
+
+        fetch(`/api/todo/delete?id=${id}`)
+        .then(response => response.text())
+        .then(data => alert(data));
+   }
+
+    function selectTodo(){
+        let id = document.getElementById('id').value;
+
+        fetch(`/api/todo/select?id=${id}`)
+            .then(response => response.json())
+            .then(res => {
+                // 注意看这里：我们改成判断 res.msg
+                if (res && res.msg && res.msg.id) {
+                    alert("查到待办：\n标题：" + res.msg.title + "\n内容：" + res.msg.content);
+                } else {
+                    // 如果是报错，通常全局异常拦截器也会把错误放在 msg 里
+                    alert("查询失败：" + (res.msg || "越权或不存在！"));
+                }
+            })
+            .catch(err => alert("查询失败，或者该待办不存在！"));
+    }
+
+    function finishTodo(){
+        let id = document.getElementById('id').value;
+        fetch(`/api/todo/finish?id=${id}`)
+            .then(response => response.text())
+            .then(data => alert(data))
+    }
+
+    function updatetitle(){
+        let id = document.getElementById('id').value;
+        let newTitle = document.getElementById('new_title').value;
+        fetch(`/api/todo/update/title?id=${id}&title=${newTitle}`)
+            .then(response => response.text())
+            .then(data => alert(data));
+    }
+
+    function updatecontent(){
+        let id = document.getElementById('id').value;
+        let newContent = document.getElementById("new_content").value;
+        fetch(`/api/todo/update/content?id=${id}&content=${newContent}`)
+            .then(response => response.text())
+            .then(data => alert(data));
+    }
+</script>
+
+</html>

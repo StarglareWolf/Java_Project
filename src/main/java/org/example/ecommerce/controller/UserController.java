@@ -20,7 +20,7 @@ public class UserController {
 
     @GetMapping("/register")    // https://localhost:8080/api/register?
     public ResultJs<String> register(String username, String password){
-        if(username == null || password == null) throw new InformationException("用户名和密码不能为空!");
+        if(username == null || password == null || username.trim().isEmpty() || password.trim().isEmpty()) throw new InformationException("用户名和密码不能为空!");
 
         User existUser = userMapper.getUserByUsername(username);
         if(existUser != null) throw new InformationException("该用户已经存在,注册失败!");
