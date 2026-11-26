@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# 忽略本地测试文件
+src/main/java/**/UserInformation.java
